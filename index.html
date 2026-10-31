@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Конструктор запиту до ШІ</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:14px;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#191919}.intro{margin:0 0 18px;font-family:Georgia,serif;font-size:18px}.panel{border:1px solid #dedede;border-radius:15px;max-width:900px;margin:auto;padding:16px 14px}h2{font-size:19px;margin:2px 0 20px;font-weight:700}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;font-size:14px;font-weight:600;color:#626262;margin:0 0 8px}.field{margin-bottom:18px}input,select,textarea{font:16px Arial,Helvetica,sans-serif;width:100%;border:1px solid #d7d7d7;border-radius:25px;padding:11px 20px;background:#fff;color:#222;outline:none}textarea{border-radius:9px;resize:vertical;min-height:67px}input:focus,select:focus,textarea:focus{border-color:#888}select{cursor:pointer}.custom-entry{margin-top:8px}.custom-entry[hidden]{display:none}.output{padding:0 14px;margin:12px 0 26px}.out-label{font-size:13px;color:#666;text-transform:uppercase;margin-bottom:6px}.out-text{font-size:15px;line-height:1.55;overflow-wrap:anywhere}.copy{width:100%;border:0;background:#080808;color:#fff;border-radius:24px;padding:13px 16px;font-weight:700;font-size:15px;cursor:pointer}.copy:hover{background:#292929}.copy:focus-visible{outline:3px solid #84baff;outline-offset:2px}@media(max-width:550px){.grid{grid-template-columns:1fr}body{padding:8px}.panel{padding:15px 12px}.intro{font-size:16px}}
+</style>
+</head><body>
+<p class="intro">Створимо невеликий <strong>«Конструктор педагогічного запиту».</strong></p>
+<main class="panel">
+<h2>Конструктор запиту до ШІ</h2>
+<div class="grid">
+<div class="field"><label for="grade">Клас</label><select id="grade"><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></div>
+<div class="field"><label for="topic">Тема</label><select id="topic"><option selected>Повторне використання матеріалів</option><option>Властивості конструкційних матеріалів</option><option>Інструменти та технологічні операції</option><option>Проєктування настільного органайзера</option><option>Будова швейної машини</option><option>Правила безпечної роботи з інструментами</option><option>Технологічна послідовність виготовлення виробу</option><option value="custom">Власна тема…</option></select><input id="topicCustom" class="custom-entry" placeholder="Введіть власну тему" aria-label="Власна тема" hidden></div>
+</div>
+<div class="field"><label for="goal">Навчальна мета</label><select id="goal"><option selected>Навчити обґрунтовано обирати матеріали для виробу</option><option>Сформувати вміння порівнювати властивості конструкційних матеріалів</option><option>Навчити розпізнавати інструменти та визначати їхнє призначення</option><option>Розвинути вміння проєктувати виріб відповідно до визначених вимог</option><option>Сформувати вміння визначати послідовність технологічних операцій</option><option>Навчити дотримуватися правил безпечної роботи</option><option>Розвинути вміння аналізувати й обґрунтовувати технологічні рішення</option><option value="custom">Власна навчальна мета…</option></select><textarea id="goalCustom" class="custom-entry" placeholder="Сформулюйте власну навчальну мету" aria-label="Власна навчальна мета" hidden></textarea></div>
+<div class="field"><label for="activity">Діяльність учня</label><select id="activity"><option selected>Розпізнавати інструменти та операції</option><option>Порівнювати властивості матеріалів</option><option>Моделювати конструкцію виробу</option><option>Аналізувати ситуації та обирати рішення</option></select></div>
+<div class="output"><div class="out-label">СФОРМОВАНИЙ ЗАПИТ</div><div class="out-text" id="result" aria-live="polite"></div></div>
+<button type="button" class="copy" id="copy">▢&nbsp; Скопіювати запит</button>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const fields=['grade','topic','topicCustom','goal','goalCustom','activity'];
+function currentValue(id){return $(id).value==='custom' ? $(id+'Custom').value.trim() : $(id).value.trim()}
+function toggleCustom(id){const custom=$(id+'Custom');const show=$(id).value==='custom';custom.hidden=!show;custom.required=show;update()}
+function makePrompt(){return `Ти — методист технологічної освітньої галузі. Розроби сценарій навчального інтерактиву для ${$('grade').value} класу на тему «${currentValue('topic')}». Мета: ${currentValue('goal')}. Діяльність учня: ${$('activity').value.toLowerCase()}. Передбач 3–5 завдань, підказки та змістовний зворотний зв'язок.`}
+function update(){$('result').textContent=makePrompt()}
+fields.forEach(id=>{ $(id).addEventListener('input',update);$(id).addEventListener('change',update)});['topic','goal'].forEach(id=>$(id).addEventListener('change',()=>toggleCustom(id)));
+$('copy').addEventListener('click',async()=>{const content=makePrompt();try{await navigator.clipboard.writeText(content)}catch(e){const ta=document.createElement('textarea');ta.value=content;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}const btn=$('copy');btn.textContent='✓ Скопійовано!';setTimeout(()=>btn.textContent='▢  Скопіювати запит',1800)});
+toggleCustom('topic');toggleCustom('goal');update();
+</script></body></html>
